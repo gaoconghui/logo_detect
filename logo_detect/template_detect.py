@@ -90,17 +90,19 @@ def detect(img):
         if "xigua" in name:
             location = detector.detect_left(img)
             if location:
-                return location
+                return name,location
         location = detector.detect_right(img)
         if location:
-            return location
+            return name,location
+    return None,None
 
 
 if __name__ == '__main__':
-    img = test_case("nologo01.jpg")
+    img = test_case("xigua01.png")
     result = detect(img)
     if result:
         top_left, bottom_right = result
+        print result
         from matplotlib import pyplot as plt
 
         cv2.rectangle(img, top_left, bottom_right, 255, 2)
