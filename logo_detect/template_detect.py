@@ -90,16 +90,17 @@ def detect(img):
         if "xigua" in name:
             location = detector.detect_left(img)
             if location:
-                return name,location
+                return name + "_left", location
         location = detector.detect_right(img)
         if location:
-            return name,location
-    return None,None
+            return name + "_right", location
+    return None, None
 
 
 if __name__ == '__main__':
-    img = test_case("xigua01.png")
-    result = detect(img)
+    img = test_case("tecent04.png")
+    print img.shape
+    name, result = detect(img)
     if result:
         top_left, bottom_right = result
         print result
