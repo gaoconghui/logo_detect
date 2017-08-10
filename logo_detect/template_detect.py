@@ -50,8 +50,8 @@ class LogoDector():
             loc = max_item[1]
             logo_shape = max_item[2]
             # 识别出的区域宽度要在0-width之间，高度亦然
-            top_left = (max(loc[0] - logo_shape[0], 0), max(loc[1] - logo_shape[1], 0))
-            bottom_right = (min(top_left[0] + logo_shape[2], width), min(top_left[1] + logo_shape[3], height))
+            top_left = (max(loc[0] - logo_shape[0], 1), max(loc[1] - logo_shape[1], 1))
+            bottom_right = (min(top_left[0] + logo_shape[2], width - 1), min(top_left[1] + logo_shape[3], height - 1))
             return top_left, bottom_right
         else:
             return None
@@ -80,13 +80,15 @@ class LogoDector():
 
 
 logo_detector_map = {
+    "xigua": LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140)),
     "tencent": LogoDector(template("template_tecent.png"), (25, 25, 330, 100)),
-    "xigua": LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140))
 }
 
 
 def detect(img):
-    for name, detector in logo_detector_map.iteritems():
+    # to keep order
+    for name in ["xigua", "tecent"]:
+        detector = logo_detector_map[name]
         if "xigua" in name:
             location = detector.detect_left(img)
             if location:
