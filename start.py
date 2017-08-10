@@ -2,10 +2,12 @@ import cv2
 import flask
 import numpy as np
 from flask import Flask, request
+from flask_script import Manager
 
 from logo_detect.template_detect import detect
 
 app = Flask(__name__)
+manager = Manager(app)
 
 
 def get_np_array_from_tar_object(stream):
@@ -26,7 +28,8 @@ def logo_detect():
             data = {
                 "name": name,
                 "left_top": list(location[0]),
-                "right_bottom": list(location[1])
+                "right_bottom": list(location[1]),
+                "image_shape": img.shape[::-1]
             }
             result["data"] = data
     except:
@@ -37,4 +40,4 @@ def logo_detect():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    manager.run()
