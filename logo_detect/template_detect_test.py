@@ -15,10 +15,11 @@ class TecentTest(unittest.TestCase):
         detector = logo_detector_map['tencent']
         for name, img in test_case_list:
             result = detector.detect_right(img)
+            print name
             if "tecent" in name:
-                self.assertIsNotNone(result)
+                self.assertIsNotNone(result,name)
             else:
-                self.assertIsNone(result)
+                self.assertIsNone(result,name)
 
     def test_xigua(self):
         detector = logo_detector_map['xigua']
@@ -26,19 +27,18 @@ class TecentTest(unittest.TestCase):
             result = detector.detect_right(img)
             if "xigua" in name and "left" not in name:
                 print name
-                self.assertIsNotNone(result)
+                self.assertIsNotNone(result,name)
             else:
-                self.assertIsNone(result)
+                self.assertIsNone(result,name)
 
     def test_xigua_left(self):
         detector = logo_detector_map['xigua']
         for name, img in test_case_list:
             result = detector.detect_left(img)
             if "xigua" in name and "left" in name:
-                print name
-                self.assertIsNotNone(result)
+                self.assertIsNotNone(result,name)
             else:
-                self.assertIsNone(result)
+                self.assertIsNone(result,name)
 
 
 if __name__ == '__main__':
