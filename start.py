@@ -1,9 +1,10 @@
 import cv2
 import flask
 import numpy as np
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_script import Manager
 
+from logo_detect.delogo import inpaint
 from logo_detect.template_detect import detect
 
 app = Flask(__name__)
@@ -36,6 +37,27 @@ def logo_detect():
         import traceback
         print traceback.format_exc()
         result['status'] = "failed"
+    return flask.jsonify(result)
+
+
+@app.route('/inpaint', methods=['POST'])
+def logo_inpaint():
+    result = {"status": "success"}
+    try:
+        print request.files
+        image_nparray = get_np_array_from_tar_object(request.files["image"].stream.read())
+        img_gary = cv2.imdecode(image_nparray, 0)
+        name, location = detect(img_gary)
+        if location:
+            img = cv2.imdecode(image_nparray, 1)
+            dst = inpaint(img, location)
+            return Response(np.array(cv2.imencode(".jpg", dst)[1]).tobytes(), mimetype="image/jpeg")
+    except:
+        import traceback
+        error_msg =  traceback.format_exc()
+        print error_msg
+        result['status'] = "failed"
+        result['error_msg'] = error_msg
     return flask.jsonify(result)
 
 
