@@ -1,6 +1,7 @@
 import cv2
 import flask
 import numpy as np
+from cv2.cv import CV_IMWRITE_JPEG_QUALITY
 from flask import Flask, request, Response
 from flask_script import Manager
 
@@ -22,7 +23,6 @@ def get_np_array_from_tar_object(stream):
 def logo_detect():
     result = {"status": "success"}
     try:
-        print request.files
         img = cv2.imdecode(get_np_array_from_tar_object(request.files["image"].stream.read()), 0)
         name, location = detect(img)
         if name:
@@ -44,17 +44,17 @@ def logo_detect():
 def logo_inpaint():
     result = {"status": "success"}
     try:
-        print request.files
         image_nparray = get_np_array_from_tar_object(request.files["image"].stream.read())
         img_gary = cv2.imdecode(image_nparray, 0)
         name, location = detect(img_gary)
         if location:
             img = cv2.imdecode(image_nparray, 1)
             dst = inpaint(img, location)
-            return Response(np.array(cv2.imencode(".jpg", dst)[1]).tobytes(), mimetype="image/jpeg")
+            return Response(np.array(cv2.imencode(".jpeg", dst, [int(CV_IMWRITE_JPEG_QUALITY), 90])[1]).tobytes(),
+                            mimetype="image/jpeg")
     except:
         import traceback
-        error_msg =  traceback.format_exc()
+        error_msg = traceback.format_exc()
         print error_msg
         result['status'] = "failed"
         result['error_msg'] = error_msg
