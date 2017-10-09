@@ -1,7 +1,10 @@
 import cv2
 import flask
 import numpy as np
-from cv2.cv import CV_IMWRITE_JPEG_QUALITY
+try:
+    from cv2.cv import CV_IMWRITE_JPEG_QUALITY
+except:
+    CV_IMWRITE_JPEG_QUALITY = 1
 from flask import Flask, request, Response
 from flask_script import Manager
 
