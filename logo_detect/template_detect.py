@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import cv2
 
-from util import template, time_use, test_case
+from util import template, time_use, test_case, paint_logo
 
 
 class LogoDector():
@@ -118,6 +118,7 @@ def resize_and_detect(img):
     return name, location
 
 
+
 if __name__ == '__main__':
     img = test_case("xigua12.jpg")
     print img.shape
@@ -126,9 +127,4 @@ if __name__ == '__main__':
     if result:
         top_left, bottom_right = result
         print result
-        from matplotlib import pyplot as plt
-
-        cv2.rectangle(img, top_left, bottom_right, 255, 2)
-        plt.imshow(img, cmap='gray')
-        plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
-        plt.show()
+        paint_logo(img,top_left,bottom_right)
