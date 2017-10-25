@@ -86,6 +86,7 @@ class LogoDector():
 logo_detector_map = OrderedDict()
 logo_detector_map['xigua'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
 logo_detector_map['tencent'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
+logo_detector_map['btime'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
 
 
 def detect(img):
@@ -120,9 +121,11 @@ def resize_and_detect(img):
 
 
 if __name__ == '__main__':
-    img = test_case("xigua12.jpg")
+    detector = logo_detector_map['btime']
+    img = test_case("btime02.png")
     print img.shape
-    name, result = detect(img)
+    name = "btime"
+    result = detector.detect_left(img)
     print name, result
     if result:
         top_left, bottom_right = result
