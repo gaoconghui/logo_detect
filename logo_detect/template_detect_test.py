@@ -12,7 +12,7 @@ for name in os.listdir(TEST_CASE_BASE):
 
 class TecentTest(unittest.TestCase):
     def test_tecent(self):
-        detector = logo_detector_map['tencent']
+        detector = logo_detector_map['tencent_right']
         for name, img in test_case_list:
             result = detector.detect_right(img)
             print name
@@ -22,7 +22,7 @@ class TecentTest(unittest.TestCase):
                 self.assertIsNone(result,name)
 
     def test_xigua(self):
-        detector = logo_detector_map['xigua']
+        detector = logo_detector_map['xigua_right']
         for name, img in test_case_list:
             result = detector.detect_right(img)
             if "xigua" in name and "left" not in name:
@@ -32,7 +32,7 @@ class TecentTest(unittest.TestCase):
                 self.assertIsNone(result,name)
 
     def test_xigua_left(self):
-        detector = logo_detector_map['xigua']
+        detector = logo_detector_map['xigua_left']
         for name, img in test_case_list:
             result = detector.detect_left(img)
             if "xigua" in name and "left" in name:

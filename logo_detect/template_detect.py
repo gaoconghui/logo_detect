@@ -84,20 +84,21 @@ class LogoDector():
 
 # to keep it order
 logo_detector_map = OrderedDict()
-logo_detector_map['xigua'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
-logo_detector_map['tencent'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
-logo_detector_map['btime'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
+logo_detector_map['xigua_right'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
+logo_detector_map['xigua_left'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
+logo_detector_map['tencent_right'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
+logo_detector_map['btime_left'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
 
 
 def detect(img):
+    result = None
     for name, detector in logo_detector_map.iteritems():
-        if "xigua" in name:
-            location = detector.detect_left(img)
-            if location:
-                return name + "_left", location
-        location = detector.detect_right(img)
-        if location:
-            return name + "_right", location
+        if "left" in name:
+            result = detector.detect_left(img)
+        if "right" in name:
+            result = detector.detect_right(img)
+        if result:
+            return name, result
     return None, None
 
 
@@ -119,9 +120,8 @@ def resize_and_detect(img):
     return name, location
 
 
-
 if __name__ == '__main__':
-    detector = logo_detector_map['btime']
+    detector = logo_detector_map['btime_left']
     img = test_case("btime02.png")
     print img.shape
     name = "btime"
@@ -130,4 +130,4 @@ if __name__ == '__main__':
     if result:
         top_left, bottom_right = result
         print result
-        paint_logo(img,top_left,bottom_right)
+        paint_logo(img, top_left, bottom_right)
