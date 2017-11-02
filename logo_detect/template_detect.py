@@ -63,7 +63,7 @@ class LogoDector():
     @time_use
     def detect_right(self, img_detect):
         width, height = img_detect.shape[::-1]
-        crop_left_bottom = (int(width * 1.0 / 5 * 4), int(height * 1.0 / 5))
+        crop_left_bottom = (int(width * 1.0 / 5 * 3), int(height * 1.0 / 5))
         crop_img = img_detect[0:crop_left_bottom[1], crop_left_bottom[0]:width]
         logo_location = self.detect(crop_img)
         if logo_location:
@@ -92,7 +92,7 @@ logo_detector_map['tencent_right'] = LogoDector(template("template_tecent.png"),
 logo_detector_strict_map = OrderedDict()
 logo_detector_strict_map['xigua_right'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.80)
 logo_detector_strict_map['xigua_left'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.80)
-logo_detector_strict_map['xigua_part_right'] = LogoDector(template("template_xigua_part.png"), (40, 20, 170, 140), 0.83)
+logo_detector_strict_map['xigua_part_right'] = LogoDector(template("template_xigua_part.png"), (60, 90, 220, 270), 0.80)
 logo_detector_strict_map['tencent_right'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
 
 
@@ -140,7 +140,7 @@ def resize_and_detect(img):
 
 if __name__ == '__main__':
     detector = logo_detector_strict_map['xigua_part_right']
-    img = test_case("xigua_part01.jpeg")
+    img = test_case("xigua_no1.jpeg")
     print img.shape
     name = "btime"
     result = detector.detect_right(img)
