@@ -45,11 +45,12 @@ def logo_detect():
 
 @app.route('/inpaint', methods=['POST'])
 def logo_inpaint():
+    strict = request.args.get('strict')
     result = {"status": "success"}
     try:
         image_nparray = get_np_array_from_tar_object(request.files["image"].stream.read())
         img_gary = cv2.imdecode(image_nparray, 0)
-        name, location = detect(img_gary)
+        name, location = detect(img_gary,strict)
         if location:
             img = cv2.imdecode(image_nparray, 1)
             dst = inpaint(img, location)

@@ -49,6 +49,7 @@ class LogoDector():
             max_val_loc.append((max_val, max_loc, logo_shape))
         max_item = max(max_val_loc, key=lambda x: x[0])
         print max_item
+        print max_val_loc
         if max_item[0] > self.threshold:
             loc = max_item[1]
             logo_shape = max_item[2]
@@ -87,12 +88,29 @@ logo_detector_map = OrderedDict()
 logo_detector_map['xigua_right'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
 logo_detector_map['xigua_left'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.85)
 logo_detector_map['tencent_right'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
-logo_detector_map['btime_left'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
+
+logo_detector_strict_map = OrderedDict()
+logo_detector_strict_map['xigua_right'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.80)
+logo_detector_strict_map['xigua_left'] = LogoDector(template("template_xigua.jpg"), (40, 20, 130, 140), 0.80)
+logo_detector_strict_map['xigua_part_right'] = LogoDector(template("template_xigua_part.png"), (40, 20, 170, 140), 0.83)
+logo_detector_strict_map['tencent_right'] = LogoDector(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
 
 
-def detect(img):
+# logo_detector_map['btime_left'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
+# logo_detector_map['btime2_left'] = LogoDector(template("template_btime2.png"), (12, 12, 200, 50), 0.9)
+# logo_detector_map['btime2_right'] = LogoDector(template("template_btime2.png"), (12, 12, 200, 50), 0.9)
+
+
+def detect(img, strict=False):
+    """
+    识别logo区域
+    :param img: 
+    :param strict: 是否宁可错杀不可放过
+    :return: 
+    """
     result = None
-    for name, detector in logo_detector_map.iteritems():
+    detector_map = logo_detector_strict_map if strict else logo_detector_map
+    for name, detector in detector_map.iteritems():
         if "left" in name:
             result = detector.detect_left(img)
         if "right" in name:
@@ -121,11 +139,11 @@ def resize_and_detect(img):
 
 
 if __name__ == '__main__':
-    detector = logo_detector_map['btime_left']
-    img = test_case("btime02.png")
+    detector = logo_detector_strict_map['xigua_part_right']
+    img = test_case("xigua_part01.jpeg")
     print img.shape
     name = "btime"
-    result = detector.detect_left(img)
+    result = detector.detect_right(img)
     print name, result
     if result:
         top_left, bottom_right = result
