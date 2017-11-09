@@ -113,8 +113,10 @@ class LogoDectorSift(LogoDector):
         kp2, des2 = self.sift.detectAndCompute(img_detect, None)
         if not kp2 and not des2:
             return None
-
-        match_points = self._find_good_points(kp2, des2)
+        try:
+            match_points = self._find_good_points(kp2, des2)
+        except:
+            return None
         if len(match_points) < self.threshold:
             return None
         # 匹配的点可能在很多不同的位置，需要找到一块聚合在一起的区域
@@ -157,6 +159,8 @@ class LogoDectorSift(LogoDector):
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
         search_params = dict(checks=50)  # or pass empty dictionary
         flann = cv2.FlannBasedMatcher(index_params, search_params)
+        print self.template_des.shape
+        print des.shape
         matches = flann.knnMatch(self.template_des, des, k=2)
 
         good = []
