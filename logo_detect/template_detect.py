@@ -217,6 +217,8 @@ logo_detector_strict_map['xigua_left'] = LogoDectorMatch(template("template_xigu
 logo_detector_strict_map['xigua_part_right'] = LogoDectorMatch(template("template_xigua_part.png"), (60, 90, 220, 270),
                                                                0.80)
 logo_detector_strict_map['tencent_right'] = LogoDectorMatch(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
+logo_detector_map['duanzi_left'] = LogoDectorSift(template("template_duanzi.png"), ratio=5, threshold=15,
+                                                  center_location=(0.5, 0.5, 0.6, 0.4))
 
 
 # logo_detector_map['btime_left'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
