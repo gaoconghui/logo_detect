@@ -1,15 +1,19 @@
 # coding: utf-8
-import os
 import time
 from functools import wraps
 
 import cv2
+import os
 
 from logo_detect.settings import TEMPLATE_BASE, TEST_CASE_BASE
 
 
 def template(name):
     return cv2.imread(os.path.join(TEMPLATE_BASE, name), 0)
+
+
+def template_complete(name):
+    return cv2.imread(os.path.join(TEMPLATE_BASE, name), cv2.IMREAD_UNCHANGED)
 
 
 def test_case(name):
@@ -22,13 +26,13 @@ def time_use(func):
         t1 = time.time()
         result = func(*args, **kwargs)
         t2 = time.time()
-        print "time use " + str(t2 - t1)
+        print func.__name__ + " time use " + str(t2 - t1)
         return result
 
     return wrapper
 
 
-def paint_logo(img, top_left, bottom_right):
+def paint_logo(img, top_left=None, bottom_right=None):
     """
     在原图上勾勒出logo
     :param img: 
@@ -38,7 +42,13 @@ def paint_logo(img, top_left, bottom_right):
     """
     from matplotlib import pyplot as plt
 
-    cv2.rectangle(img, top_left, bottom_right, 255, 2)
-    plt.imshow(img, cmap='gray')
+    if top_left and bottom_right:
+        cv2.rectangle(img, top_left, bottom_right, 255, 2)
+    plt.imshow(img)
     plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
     plt.show()
+
+
+if __name__ == '__main__':
+    temp = template("duanzi01.png")
+    paint_logo(temp)
