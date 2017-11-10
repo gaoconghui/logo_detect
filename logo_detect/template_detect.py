@@ -5,7 +5,7 @@ from collections import OrderedDict, Counter
 import cv2
 import numpy as np
 
-from util import template, time_use, test_case, paint_logo
+from util import template, time_use, test_case, paint_logo, paint_logos, todo_case
 
 
 class LogoDector():
@@ -28,7 +28,7 @@ class LogoDector():
     @time_use
     def detect_left(self, img_detect):
         width, height = img_detect.shape[::-1]
-        crop_right_bottom = (int(width * 1.0 / 4), int(height * 1.0 / 4))
+        crop_right_bottom = (int(width * 1.0 / 3), int(height * 1.0 / 3))
         crop_img = img_detect[0:crop_right_bottom[1], 0:crop_right_bottom[0]]
         logo_location = self.detect(crop_img)
         if logo_location:
@@ -142,7 +142,7 @@ class LogoDectorSift(LogoDector):
         top_left = (int(max(center[0] - logo_width * self.center_location[2], 1)),
                     int(max(center[1] - logo_height * self.center_location[0], 1)))
         bottom_right = (
-            int(min(center[0] + logo_width * self.center_location[3], img_width - 1)),
+            int(min(max(center[0] + logo_width * self.center_location[3],logo_width), img_width - 1)),
             int(min(center[1] + logo_height * self.center_location[1], img_height - 1)))
         return top_left, bottom_right
 
@@ -217,8 +217,8 @@ logo_detector_strict_map['xigua_left'] = LogoDectorMatch(template("template_xigu
 logo_detector_strict_map['xigua_part_right'] = LogoDectorMatch(template("template_xigua_part.png"), (60, 90, 220, 270),
                                                                0.80)
 logo_detector_strict_map['tencent_right'] = LogoDectorMatch(template("template_tecent.png"), (25, 25, 330, 100), 0.92)
-logo_detector_map['duanzi_left'] = LogoDectorSift(template("template_duanzi.png"), ratio=5, threshold=15,
-                                                  center_location=(0.5, 0.5, 0.6, 0.4))
+logo_detector_strict_map['duanzi_left'] = LogoDectorSift(template("template_duanzi.png"), ratio=4, threshold=15,
+                                                  center_location=(0.5, 0.5, 0.6, 0.35))
 
 
 # logo_detector_map['btime_left'] = LogoDector(template("template_btime.png"), (20, 20, 100, 100), 0.9)
@@ -233,16 +233,18 @@ def detect(img, strict=False):
     :param strict: 是否宁可错杀不可放过
     :return: 
     """
-    result = None
+    detect_locations = []
     detector_map = logo_detector_strict_map if strict else logo_detector_map
     for name, detector in detector_map.iteritems():
+        result = None
         if "left" in name:
             result = detector.detect_left(img)
         if "right" in name:
             result = detector.detect_right(img)
         if result:
-            return name, result
-    return None, None
+            detect_locations.append((name, result))
+        print name,result
+    return detect_locations
 
 
 # 某些很大的图经常会匹配到很小的logo模板，暂时用不到
@@ -255,27 +257,28 @@ def resize_and_detect(img):
     if scale < 1:
         size = (int(width * scale), int(height * scale))
         img = cv2.resize(img, size)
-    name, location = detect(img)
-    print name, location
+    name_locations = detect(img)
+    print name_locations
     # restore
-    if scale < 1 and location:
-        location = tuple([tuple([int(size * scale) for size in shape]) for shape in location])
-    return name, location
+    result = []
+    if scale < 1 and name_locations:
+        for name, location in name_locations:
+            location = tuple([tuple([int(size * scale) for size in shape]) for shape in location])
+            result.append((name, location))
+    return result
 
 
 if __name__ == '__main__':
 
     detector = logo_detector_map['duanzi_left']
-    img = test_case("duanzi_left02.png")
+    img = test_case("duanzi_left03.png")
+    # img = test_case("duanzi_left02.png")
     print img.shape
     name = "btime"
-    result = detector.detect_left(img)
-    print name, result
-    if result:
-        top_left, bottom_right = result
-        print result
-        paint_logo(img, top_left, bottom_right)
-
+    name_locations =detect(img,strict=True)
+    print name_locations
+    print [location for _,location in name_locations]
+    paint_logos(img,[location for _,location in name_locations])
 
         # temp = cv2.imread(os.path.join(TEMPLATE_BASE, "template_duanzi.png"),cv2.IMREAD_UNCHANGED)
         # # channels = cv2.split(temp)

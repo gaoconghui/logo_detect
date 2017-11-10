@@ -5,7 +5,7 @@ from functools import wraps
 import cv2
 import os
 
-from logo_detect.settings import TEMPLATE_BASE, TEST_CASE_BASE
+from logo_detect.settings import TEMPLATE_BASE, TEST_CASE_BASE, TODO_BASE
 
 
 def template(name):
@@ -18,6 +18,10 @@ def template_complete(name):
 
 def test_case(name):
     return cv2.imread(os.path.join(TEST_CASE_BASE, name), 0)
+
+
+def todo_case(name):
+    return cv2.imread(os.path.join(TODO_BASE, name), 0)
 
 
 def time_use(func):
@@ -43,6 +47,15 @@ def paint_logo(img, top_left=None, bottom_right=None):
     from matplotlib import pyplot as plt
 
     if top_left and bottom_right:
+        cv2.rectangle(img, top_left, bottom_right, 255, 2)
+    plt.imshow(img)
+    plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+    plt.show()
+
+
+def paint_logos(img, locations):
+    from matplotlib import pyplot as plt
+    for top_left, bottom_right in locations:
         cv2.rectangle(img, top_left, bottom_right, 255, 2)
     plt.imshow(img)
     plt.title('Detected Point'), plt.xticks([]), plt.yticks([])

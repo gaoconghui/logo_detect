@@ -11,7 +11,7 @@ import numpy as np
 from logo_detect.template_detect import detect
 
 
-def inpaint(img, logo_location):
+def inpaint(img, logo_locations):
     """
     清除logo。 这个有个问题，之前delogo得到的区域不会让值到边缘0，而此处是需要的，所以需要对logo_location做一些预处理
     :param img: 原始图像
@@ -22,16 +22,20 @@ def inpaint(img, logo_location):
     height, width = shape[0], shape[1]
 
     mask = np.zeros((height, width), np.uint8)
-    top_left, bottom_right = logo_location
-    top_left_x, top_left_y = top_left
-    bottom_right_x, bottom_right_y = bottom_right
-    cv2.rectangle(mask, (top_left_x, top_left_y - 1), (bottom_right_x + 1, bottom_right_y), 255, -1)
+    print logo_locations
+    for location in logo_locations:
+        print "location"
+        print location
+        top_left, bottom_right = location
+        top_left_x, top_left_y = top_left
+        bottom_right_x, bottom_right_y = bottom_right
+        cv2.rectangle(mask, (top_left_x, top_left_y - 1), (bottom_right_x + 1, bottom_right_y), 255, -1)
     dst = cv2.inpaint(img, mask, 3, cv2.INPAINT_TELEA)
     return dst
 
 
 if __name__ == '__main__':
-    img = cv2.imread("/Users/gaoconghui/PycharmProjects/logo_detect/logo_detect/test_case/xigua_part01.jpeg")
+    img = cv2.imread("/Users/gaoconghui/PycharmProjects/logo_detect/logo_detect/TODO/duanzi01.png")
     shape = img.shape
     if len(shape) == 3:
         dim = shape[-1]
@@ -43,10 +47,12 @@ if __name__ == '__main__':
             raise ValueError()
     else:
         img_gary = img.copy()
-    result = detect(img_gary, strict=1)
+    result = detect(img_gary)
+    print
     if result:
-        location = result[1]
-        dst = inpaint(img, location)
+        locations = [location for _,location in result]
+        print locations
+        dst = inpaint(img, locations)
         print cv2.imencode(".jpg", dst)
         from matplotlib import pyplot as plt
 
